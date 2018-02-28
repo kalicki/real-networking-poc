@@ -8,8 +8,8 @@ services:
 		ports:
 			- '5432:5432'
 		volumes:
-			- postgres:/var/lib/postgresql/data
-			
+			- postgres:/var/lib/postgresql/data # Mount a persistable volume
+
 	# Backend with Rails API 5 https://docs.docker.com/compose/rails/#define-the-project
 	backend:
 		build: ./backend
@@ -20,8 +20,8 @@ services:
 		depends_on:
 			- postgres
 		volumes:
-			- ./backend:/app
-			- bundle:/usr/local/bundle
+			- ./backend:/app					 # Mount app into container
+			- bundle:/usr/local/bundle # Gems
 		environment:
 		RAILS_ENV: development
 
