@@ -1,44 +1,44 @@
 # Author: Filipe Kalicki
 version: '3'
 services:
-	# Database with PostgresSQL
-	postgres:
-		image: postgres:latest
-		container_name: realnetworking_db
-		ports:
-			- '5432:5432'
-		volumes:
-			- postgres:/var/lib/postgresql/data # Mount a persistable volume
+  # Database with PostgresSQL
+  postgres:
+    image: postgres:latest
+    container_name: realnetworking_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data # Mount a persistable volume
 
-	# Backend with Rails API 5 https://docs.docker.com/compose/rails/#define-the-project
-	backend:
-		build: ./backend
-		container_name: realnewtworking_backend
-		command: rails s -b 0.0.0.0 -p 3000
-		ports:
-			- '3000:3000'
-		depends_on:
-			- postgres
-		volumes:
-			- ./backend:/app					 # Mount app into container
-			- bundle:/usr/local/bundle # Gems
-		environment:
-		RAILS_ENV: development
+  # Backend with Rails API 5 https://docs.docker.com/compose/rails/#define-the-project
+  backend:
+    build: ./backend
+    container_name: realnewtworking_backend
+    command: [ "rails", "s", "-b", "0.0.0.0", "-p", "3000"]
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app # Mount app into container
+      - bundle:/usr/local/bundle # Gems
+    environment:
+      - RAILS_ENV=development
 
-	# Frontend with React
-	frontend:
-		build: ./frontend
-		container_name: realnetworking_frontend
-		command: yarn start
-		ports:
-			- '8080:8080'
-		depends_on:
-			- backend
-		volumes:
-			- ./frontend:/app
-		environment:
-		NODE_ENV: development
+  # Frontend with React
+  frontend:
+    build: ./frontend
+    container_name: realnetworking_frontend
+    command: [ "serve", "-s", "build", "-p", "8080" ]
+    ports:
+      - '8080:8080'
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/public
+    environment:
+      - NODE_ENV=development
 
 volumes:
-	postgres:
-	bundle:
+  postgres:
+  bundle:
