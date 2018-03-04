@@ -1,10 +1,15 @@
-Types::CompanyType = GraphQL::ObjectType.define do                                                                                                                                                                                              
-  name 'CompanyType'
+Types::CompanyType = GraphQL::ObjectType.define do
+  name 'Company'
   description 'A company of the user'
 
-  field :id, !types.ID, hash_key: :uuid
-  field :name, types.String "The name of this company"
-  field :segment, types.String "The segment of this company"
-  field :user, types[Types::UserType] "The name of this user"
-  field :created_at, types.String, "The time at value created"
+  field :id, !types.ID
+  field :name, types.String
+  field :segment, types.String
+  field :created_at, types.String
+  field :users do
+    type types[Types::UserType]
+    resolve ->(obj, _args, _ctx) {
+      obj.users
+    }
+  end
 end
