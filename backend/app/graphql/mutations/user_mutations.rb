@@ -1,35 +1,40 @@
 module UserMutations
   SignIn = GraphQL::Relay::Mutation.define do
-    name "Sign In"
+    name "SignIn"
     description "Allow access user"
-    
+
     input_field :email, types.String
 
     return_field :token, types.String
 
-    resolve ->(obj, args, ctx) {
-      user = User.find_by(email: args[:email])
-      if user.present?
-        user.generate_access_token!
+    resolve ->(_obj, args, _ctx) {
+      begin
+        user = User.find_by(email: args[:email])
+        user.generate_access_token! if user.present?
+
+      rescue ActiveRecord::RecordInvalid => err
+        GraphQL::ExecutionError.new("#{user.errors.full_messages.join(", ")}")
       end
     }
-  end 
+  end
 
   SingOut = GraphQL::Relay::Mutation.define do
-    name "Sing Out"
+    name "SingOut"
     description "Remove token access user"
 
     return_type types.Boolean
 
-    resolve ->(obj, args, ctx) {
-      if ctx[:current_user].update(access_token: nil)
-        return true
+    resolve ->(_obj, args, _ctx) {
+      begin
+        return true if User.find(args[:email]).update(access_token: nil)
+      rescue ActiveRecord::RecordInvalid => err
+        GraphQL::ExecutionError.new("#{user.errors.full_messages.join(", ")}")
       end
     }
   end
 
   Create = GraphQL::Relay::Mutation.define do
-    name "Create user "
+    name "CreateUser "
     description "Allow create new user"
 
     input_field :name, types.String
@@ -37,24 +42,23 @@ module UserMutations
 
     return_type Types::UserType
 
-    resolve ->(obj, args, ctx) {
-      user = User.new(
-        name: args[:name],
-        email: args[:email],
-        company: nil,
-      )
-
-      if user.save
+    resolve ->(_obj, args, _ctx) {
+      begin
+        user = User.new(
+          name: args[:name],
+          email: args[:email],
+          company: nil
+        )
         user.generate_access_token!
         return user
-      else
-        return GraphQL::ExecutionError.new("Invalid input: #{user.errors.full_messages.join(', ')}")
+      rescue ActiveRecord::RecordInvalid => err
+        GraphQL::ExecutionError.new("#{user.errors.full_messages.join(", ")}")
       end
     }
   end
 
   Update = GraphQL::Relay::Mutation.define do
-    name "Update user "
+    name "UpdatUser "
     description "Allow update a user exist"
 
     input_field :name, types.String
@@ -62,27 +66,28 @@ module UserMutations
 
     return_type Types::UserType
 
-    resolve ->(obj, args, ctx) {
-      current_user = ctx[:current_user]
-     
-      if current_user.update(name: args[:name], email: args[:email])
-        return user
-      else
-        return GraphQL::ExecutionError.new("Invalid input: #{user.errors.full_messages.join(', ')}")
+    resolve ->(_obj, args, _ctx) {
+      begin
+        user = User.find_by(email: args[:email])
+        return user if user.update(name: args[:name], email: args[:email])
+      rescue ActiveRecord::RecordInvalid => err
+        GraphQL::ExecutionError.new("#{user.errors.full_messages.join(", ")}")
       end
     }
-
   end
 
   Destroy = GraphQL::Relay::Mutation.define do
-    name "Destroy user"
+    name "DestroyUser"
     description "Remove user via destroy"
 
     return_type types.Boolean
 
-    resolve ->(obj, args, ctx) {
-      if ctx[:current_user].destroy
-        return true
+    resolve ->(_obj, args, _ctx) {
+      begin
+        user = User.find_by(email: args[:email])
+        return true if user.destroy
+      rescue ActiveRecord::RecordInvalid => err
+        GraphQL::ExecutionError.new("#{user.errors.full_messages.join(", ")}")
       end
     }
   end
