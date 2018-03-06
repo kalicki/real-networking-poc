@@ -6,10 +6,5 @@ Types::CompanyType = GraphQL::ObjectType.define do
   field :name, types.String
   field :segment, types.String
   field :created_at, types.String
-  field :users do
-    type types[Types::UserType]
-    resolve ->(obj, _args, _ctx) {
-      obj.users
-    }
-  end
+  field :users, types[Types::UserType]
 end

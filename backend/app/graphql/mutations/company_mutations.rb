@@ -1,8 +1,20 @@
 module CompanyMutations
+  #mutation {
+  #  CreateCompany(input: {
+  #    email: "abreu@gmail.com", 
+  #    name: "Test S/A"
+  #    segment: "Hardware"
+  #  }) {
+  #    id
+  #    name
+  #    segment
+  #  }
+  #}
   Create = GraphQL::Relay::Mutation.define do
     name "CreateCompany "
     description "create new Company"
 
+    input_field :email, types.String
     input_field :name, types.String
     input_field :segment, types.String
 
@@ -16,8 +28,8 @@ module CompanyMutations
           segment: args[:segment]
         )
         if new_company.save
-          user.update(company: new_company.id)
-          return new_company
+          user.update(company_id: new_company.id)
+          new_company
         end
       rescue ActiveRecord::RecordInvalid => err
         GraphQL::ExecutionError.new("#{company.errors.full_messages.join(", ")}")
@@ -25,10 +37,22 @@ module CompanyMutations
     }
   end
   
+  #mutation {
+  #  UpdateCompany(input: {
+  #    id: 5, 
+  #    name: "Abacate S/A",
+  #    segment: "Alimentos"
+  #  }) {
+  #    id
+  #    name
+  #    segment
+  #  }
+  #}
   Update = GraphQL::Relay::Mutation.define do
     name "UpdateCompany "
     description "Allow update a Company exist"
 
+    input_field :id, types.ID
     input_field :name, types.String
     input_field :segment, types.String
 
@@ -45,7 +69,7 @@ module CompanyMutations
             segment: args[:segment]
           )
 
-          return company
+          company
         end
       rescue ActiveRecord::RecordInvalid => err
         GraphQL::ExecutionError.new("#{company.errors.full_messages.join(", ")}")
@@ -53,22 +77,32 @@ module CompanyMutations
     }
   end
   
+  # mutation {
+  #  DestroyCompany(input: {
+  #    id: 4
+  #  })
+  # }
   Destroy = GraphQL::Relay::Mutation.define do
     name "DestroyCompany"
     description "Remove Company via destroy"
+
+    input_field :id, types.ID
 
     return_type types.Boolean
 
     resolve ->(_obj, args, _ctx) {
       begin
-        user = User.find_by(email: args[:email])
         company = Company.find(args[:id])
 
-        if company.destroy
+        if company.present?
           # Change company for current user
-          user.update(company: nil)
-
-          return true
+          User.where(company_id: args[:id]).find_each do |user|
+            user.update(company_id: nil)
+          end
+          
+          # Destroy company
+          company.destroy
+          true
         end
       rescue ActiveRecord::RecordInvalid => err
         GraphQL::ExecutionError.new("#{company.errors.full_messages.join(", ")}")

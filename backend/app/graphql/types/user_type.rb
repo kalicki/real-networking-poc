@@ -5,6 +5,6 @@ Types::UserType = GraphQL::ObjectType.define do
   field :id, !types.ID
   field :name, types.String
   field :email, !types.String
-  field :company, types.ID
+  field :company_id, types.ID
   field :auth_token, types.String
 end

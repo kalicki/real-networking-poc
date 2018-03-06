@@ -1,12 +1,19 @@
 class User < ApplicationRecord
-  belongs_to :company
-
-  validates :name, :email, :password_digest, presence: true
-  validates :email, uniqueness: true, format: /@/
+  belongs_to :company, optional: true
 
   def generate_access_token!
-    self.access_token = SecureRandom.urlsafe_base64(16)
+    self.auth_token = generate_token
     self.save!
-    self.access_token
+    self.auth_token
+  end
+  
+  private
+  
+  # https://blog.bigbinary.com/2016/03/23/has-secure-token-to-generate-unique-random-token-in-rails-5.html
+  def generate_token
+    loop do
+      token = SecureRandom.hex(10)
+      break token unless User.where(auth_token: token).exists?
+    end
   end
 end
