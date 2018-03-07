@@ -1,28 +1,168 @@
-.App {
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500|Roboto:400,500');
+
+body {
+  line-height: 1.25;
+  background-color: #EDEDED;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  color: #fff;
+  font-size: 1.33rem;
+}
+
+header {
+  position: relative;
+  background:linear-gradient(to right, #266873, #273A80);
   text-align: center;
+  min-height: 3.25rem;
+  padding: 0.5rem 1rem;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+header > .btn-back {
+  background-color: transparent;
+  position: relative;
+  float: left;
+  cursor: pointer;
+  border: 0;
+  padding: 20px 0px;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+header > .btn-back::before {
+  content: "";
+  display: inline-block;
+  width: 0.90rem;
+  height: 0.90rem;
+  box-shadow: 5px -5px 1px 0 #f6f6f6 inset;
+  transform: rotate(45deg);
 }
 
-.App-title {
-  font-size: 1.5em;
+header > .header-title {
+  text-align: center;
+  display: inline-block;
 }
 
-.App-intro {
-  font-size: large;
+.hamburguer-menu {
+  position: relative;
+  top: 15px;
+  display: block;
+  padding: 12px;
+  cursor: pointer;
+  float: right;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.hamburguer-menu > span {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background-color: #f6f6f6;
+  display: block;
+  height: 2px;
+  width: 100%;
+}
+
+.hamburguer-menu > span::before, 
+.hamburguer-menu > span::after {
+  content: "";
+  background-color: #f6f6f6;
+  position: absolute;
+  top: calc(50% - 10px);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  width: 100%;
+}
+
+.hamburguer-menu > span::after {
+  top: calc(50% + 8px);
+}
+
+.react-tabs {
+  padding: 1rem;
+}
+
+.react-tabs > ul {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 100%;
+  list-style: none;
+  text-align: center;
+  border: 2px solid #17969e;
+  border-radius: 30px;
+  padding: 0;
+}
+
+.react-tabs > ul > li {
+  display: block;
+  width: 50%;
+  float: left;
+  color: #17969e;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.react-tabs > ul > li.react-tabs__tab--selected {
+  background-color: #17969e;
+  color: #f6f6f6;
+}
+
+.react-tabs > ul > li.react-tabs__tab--selected:first-child {
+  border-radius: 15px 0px 0px 15px;
+}
+
+.react-tabs > ul > li.react-tabs__tab--selected:last-child {
+  border-radius: 0px 15px 15px 0px;
+}
+
+form > span {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  color: #858585;
+  border-bottom: 1px solid #858585;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+}
+
+label {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  color: #858585;
+  display: block;
+  margin: 0;
+}
+
+input[type="text"], input[type="email"], select {
+  box-sizing: border-box;
+  background-color: #f6f6f6;
+  border: 2px solid #D8D8D8;
+  border-radius: 15px;
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 0.75rem;
+}
+
+input[type="submit"] {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.8rem;
+  background-color: #17969e;
+  color: #f6f6f6;
+  border-radius: 10px;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
 }
